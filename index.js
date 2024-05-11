@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
@@ -115,7 +115,53 @@ async function run() {
       }
     });
 
-    //create projects
+    //get single project
+    app.get("/api/v1/projects/:id", async (req, res) => {
+      const { id } = req.params;
+      try {
+        const query = { _id: new ObjectId(id) };
+
+        const result = await projectsCollection.findOne(query);
+
+        res.status(200).json({
+          success: true,
+          message: "Projects retrieved successfully",
+          data: result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to retrieve project",
+          error: error.message,
+        });
+      }
+    });
+
+    // Update project by ID
+    app.put("/api/v1/projects/:id", async (req, res) => {
+      const projectId = req.params.id;
+      const updatedProject = req.body;
+      try {
+        const filter = { _id: new ObjectId(projectId) };
+        const updateDoc = {
+          $set: updatedProject,
+        };
+        const result = await projectsCollection.updateOne(filter, updateDoc);
+        res.status(200).json({
+          success: true,
+          message: "Project updated successfully",
+          data: result,
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to update project",
+          error: err.message,
+        });
+      }
+    });
+
+    //create blogs
     app.post("/api/v1/blogs", async (req, res) => {
       const blogs = req.body;
       try {
@@ -135,7 +181,7 @@ async function run() {
       }
     });
 
-    // get all project
+    // get all blogs
     app.get("/api/v1/blogs", async (req, res) => {
       try {
         const result = await blogsCollection.find().toArray();
