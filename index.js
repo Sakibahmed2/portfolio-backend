@@ -200,6 +200,52 @@ async function run() {
       }
     });
 
+    //get single blog
+    app.get("/api/v1/blogs/:id", async (req, res) => {
+      const { id } = req.params;
+      try {
+        const query = { _id: new ObjectId(id) };
+
+        const result = await blogsCollection.findOne(query);
+
+        res.status(200).json({
+          success: true,
+          message: "Blog retrieved successfully",
+          data: result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to retrieve blog",
+          error: error.message,
+        });
+      }
+    });
+
+    // Update blog by ID
+    app.put("/api/v1/blogs/:id", async (req, res) => {
+      const blogId = req.params.id;
+      const updateBlog = req.body;
+      try {
+        const filter = { _id: new ObjectId(blogId) };
+        const updateDoc = {
+          $set: updateBlog,
+        };
+        const result = await blogsCollection.updateOne(filter, updateDoc);
+        res.status(200).json({
+          success: true,
+          message: "Blog updated successfully",
+          data: result,
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to update blog",
+          error: err.message,
+        });
+      }
+    });
+
     // Start the server
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
