@@ -76,6 +76,84 @@ async function run() {
       });
     });
 
+    //create projects
+    app.post("/api/v1/projects", async (req, res) => {
+      const project = req.body;
+      try {
+        const result = await projectsCollection.insertOne(project);
+
+        res.status(201).json({
+          success: true,
+          message: "Project created successfully",
+          data: result,
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to create project",
+          error,
+        });
+      }
+    });
+
+    // get all project
+    app.get("/api/v1/projects", async (req, res) => {
+      try {
+        const result = await projectsCollection.find().toArray();
+
+        res.status(200).json({
+          success: true,
+          message: "Projects retrieved successfully",
+          data: result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to retrieve project",
+          error: error.message,
+        });
+      }
+    });
+
+    //create projects
+    app.post("/api/v1/blogs", async (req, res) => {
+      const blogs = req.body;
+      try {
+        const result = await blogsCollection.insertOne(blogs);
+
+        res.status(201).json({
+          success: true,
+          message: "Blogs created successfully",
+          data: result,
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to create blogs",
+          error,
+        });
+      }
+    });
+
+    // get all project
+    app.get("/api/v1/blogs", async (req, res) => {
+      try {
+        const result = await blogsCollection.find().toArray();
+
+        res.status(200).json({
+          success: true,
+          message: "Blogs retrieved successfully",
+          data: result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to retrieve Blogs",
+          error: error.message,
+        });
+      }
+    });
+
     // Start the server
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
