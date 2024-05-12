@@ -61,21 +61,6 @@ async function run() {
       }
     });
 
-    //get single product
-    app.get("/api/v1/products/:id", async (req, res) => {
-      const { id } = req.params;
-
-      const query = { _id: new ObjectId(id) };
-
-      const result = await productsCollection.findOne(query);
-
-      res.status(200).json({
-        success: true,
-        message: "Products retrieved successfully",
-        data: result,
-      });
-    });
-
     //create projects
     app.post("/api/v1/projects", async (req, res) => {
       const project = req.body;
@@ -132,6 +117,26 @@ async function run() {
         res.status(500).json({
           success: false,
           message: "Failed to retrieve project",
+          error: error.message,
+        });
+      }
+    });
+
+    //delete project
+    app.delete("/api/v1/projects/:id", async (req, res) => {
+      const { id } = req.params;
+      try {
+        const quarey = { _id: new ObjectId(id) };
+        const result = await projectsCollection.deleteOne(quarey);
+        res.status(200).json({
+          success: true,
+          message: "Projects deleted successfully",
+          data: result,
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to delete project",
           error: error.message,
         });
       }
@@ -242,6 +247,26 @@ async function run() {
           success: false,
           message: "Failed to update blog",
           error: err.message,
+        });
+      }
+    });
+
+    //delete blog
+    app.delete("/api/v1/blogs/:id", async (req, res) => {
+      const { id } = req.params;
+      try {
+        const quarey = { _id: new ObjectId(id) };
+        const result = await blogsCollection.deleteOne(quarey);
+        res.status(200).json({
+          success: true,
+          message: "Blog deleted successfully",
+          data: result,
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to delete blog",
+          error: error.message,
         });
       }
     });
